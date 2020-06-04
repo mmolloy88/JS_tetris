@@ -69,13 +69,28 @@ document.addEventListener('DOMContentLoaded', () =>{
         }
 
     //move down timer
-    timerId = setInterval(moveDown, 1000)
+    timerId = setInterval(moveDown, 750)
+
+    // assign functions to keyCodes
+    function control(e) {
+        if(e.keyCode === 37) {
+            moveLeft() // left key
+        } else if (e.keyCode === 38) {
+            rotate()  //up key
+        } else if (e.keyCode === 39) {
+            moveRight() // right key
+        } else if (e.keyCode === 40) {
+            moveDown() // down key
+        }
+    }
+    document.addEventListener('keyup', control)
 
     //move down function
     function moveDown() {
         undraw()
         currentPosition += width
         draw()
+        freeze()
     }
 
     //freeze function
@@ -83,8 +98,54 @@ document.addEventListener('DOMContentLoaded', () =>{
         if(current.some(index => squares[currentPosition + index + width].classList.contains("taken"))) {
             current.forEach(index => squares[currentPosition + index].classList.add("taken"))
             // start new tetromino falling
-            random
+            random = Math.floor(Math.random()*theTetrominoes.length)
+            current = theTetrominoes[random][currentRotation]
+            currentPosition = 4
+            draw()
         }
     }
+
+    // stop the blocks from going through the left side
+    function moveLeft() {
+        undraw()
+        const isAtLeftEdge = current.some(index => (currentPosition + index) % width === 0)
+
+        if(!isAtLeftEdge) currentPosition -=1
+
+        if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+            currentPosition += 1
+        }
+
+        draw()
+    }
+
+    // stop blocks moving to through the right side
+    function moveRight() {
+        undraw()
+        const isAtRightEdge = current.some(index => (currentPosition + index) % width === width -1)
+
+        if(!isAtRightEdge) currentPosition +=1
+
+        if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+            currentPosition -= 1
+        }
+
+        draw()
+    }
+
+    //rotate blocks using up arrow
+    function rotate() {
+        undraw()
+        currentRotation ++
+        if(currentRotation === current.length) {
+            currentRotation = 0
+        }
+        current = theTetrominoes[random][currentRotation]
+        draw()
+    }
+
+
+    // show the next tetromino in minigrid
+    const 
 
 })
